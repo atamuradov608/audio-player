@@ -24,21 +24,73 @@ def save_audio_paths(paths_list: list, open_mode: str = "w") -> None:
 
 path = "/home/daetoya/Загрузки/Telegram Desktop/Eminem – Mockingbird.mp3"
 
+def get_audio_name(path: str) -> str:
+    ind = -1
+    for i in range(len(path) - 1, -1, -1):
+        if path[i] == "/":
+            ind = i
+            break
+    return path[ind + 1:]
 
-pygame.mixer.init()
-pygame.mixer.music.load(path)
-pygame.mixer.music.play()
+class PlayList:
+    def __init__(self):
+        self.audio_list: list[str] = find_audio_files("/home/")
+        self.current_audio_index: int = 0
+        pygame.mixer.init()
+        self.balance()
 
-s = ""
-while s != "exit":
-    s = input("$ ")
-    if s == "pause":
-        pygame.mixer.music.pause()
-    elif s == "unpause":
-        pygame.mixer.music.unpause()
-    elif s == "stop":
-        pygame.mixer.music.stop()
-    elif s == "play":
+    def balance(self):
+        pygame.mixer.music.load(self.audio_list[self.current_audio_index])
+
+    def print_playlist(self):
+        for i, el in enumerate(self.audio_list, start=1):
+            if i == self.current_audio_index + 1:
+                print("-> ", end="")
+            print(f"{i}) {get_audio_name(el)}")
+
+    def change_audio(self, num: int) -> None:
+        self.current_audio_index = num
+
+    def play_audio(self):
         pygame.mixer.music.play()
 
-print("hello")
+    def pause_audio(self):
+        pygame.mixer.music.pause()
+
+    def unpause_audio(self):
+        pygame.mixer.music.unpause()
+
+    def stop_audio(self):
+        pygame.mixer.music.stop()
+
+    def next_audio(self):
+        self.current_audio_index += 1
+        self.balance()
+        self.play_audio()
+
+    def previous_audio(self):
+        self.current_audio_index -= 1
+        self.balance()
+        self.play_audio()
+
+    def start_cycle(self):
+        commands = {
+            "play": self.play_audio,            # воспроизвести аудио
+            "pause": self.pause_audio,          # поставить аудио на паузу
+            "unpause": self.unpause_audio,      # продолжить воспроизведение
+            "stop": self.stop_audio,            # завершить текущее аудио
+            "next": self.next_audio,            # запустить следующее аудио
+            "previous": self.previous_audio,    # запусить предыдущее аудио
+            "playlist": self.print_playlist     # вывести плейлист
+        }
+        user_input = ""
+        while user_input != "exit":
+            user_input = input("$ ")
+            if commands.__contains__(user_input):
+                commands[user_input]()
+
+
+
+playlist = PlayList()
+playlist.print_playlist()
+playlist.start_cycle()
