@@ -35,10 +35,15 @@ def get_audio_name(path: str) -> str:
 # Основной класс для работу с аудио
 class PlayList:
     def __init__(self):
+        #self.audio_list: list[str] = find_audio_files("/home/")  # Находим все аудиофайлы
+        #self.current_audio_index: int = 0     # Выбираем самое первое найденное аудио
+        pygame.mixer.init()       # запускаем mixer для работу со звуком
+        #self.balance()      # загружаем в mixer выбранное аудио
+
+    def all_audio(self):
         self.audio_list: list[str] = find_audio_files("/home/")  # Находим все аудиофайлы
         self.current_audio_index: int = 0     # Выбираем самое первое найденное аудио
-        pygame.mixer.init()       # запускаем mixer для работу со звуком
-        self.balance()      # загружаем в mixer выбранное аудио
+        self.balance()  # загружаем в mixer выбранное аудио
 
     # Функция для загрузки в mixer выбранное аудио
     def balance(self):
@@ -115,5 +120,6 @@ class PlayList:
 
 
 playlist = PlayList()
+playlist.all_audio()
 playlist.print_full_playlist()
 playlist.start_cycle()
